@@ -24,7 +24,8 @@ class Diagnostics
   end
 
   def path
-    request_lines[0].split(' ')[1]
+    path_and_parameters = request_lines[0].split(' ')[1]
+    path_and_parameters.split('?')[0]
   end
   
   def protocol
