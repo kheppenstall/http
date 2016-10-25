@@ -11,14 +11,14 @@ class WordSearch
   end
 
   def output
-    if known?
+    if known?(word) || known?(word.downcase)
       "#{word} is a known word"
     else
       "#{word} is not a known word"
     end
   end
 
-  def known?
+  def known?(word)
     dictionary.include?(word)
   end
 

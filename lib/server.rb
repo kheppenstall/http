@@ -72,6 +72,7 @@ class Server
   def shutdown(requests)
     "Total Requests: #{requests + 1}"
   end
+
 end
 
 Server.new
