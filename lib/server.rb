@@ -1,11 +1,13 @@
 require 'socket'
 require './lib/diagnostics'
 require './lib/word_search'
+require './lib/game'
 
 
 class Server
 
-  attr_reader :server
+  attr_reader :server,
+              :game
 
   def initialize
     @server = TCPServer.new 9292
@@ -17,22 +19,35 @@ class Server
     loop do
       client = server.accept 
       request_lines = parse_request(client)
+      request = Diagnostics.new(request_lines)
       
-      case path(request_lines)
-        when "/hello"
-          client.puts hello_world(requests)
-        when "/datetime"
-          client.puts datetime
-        when "/shutdown"
-          client.puts shutdown(requests)
-          client.puts diagnostics(request_lines)
-          break
-        when "/wordsearch"
-          client.puts word_search(request_lines)
+      if request.verb == 'GET'
+        case request.path
+          when "/hello"
+            client.puts hello_world(requests)
+          when "/datetime"
+            client.puts datetime
+          when "/shutdown"
+            client.puts shutdown(requests)
+            client.puts request.all
+            break
+          when "/wordsearch"
+            client.puts word_search(request)
+          when "/game"
+            client.puts game.status if game
+        end
+      elsif request.verb == 'POST'
+        case request.path
+          when "/start_game"
+            client.puts "Good luck!"
+            @game = Game.new
+          when "/game"
+            game.guess(request.value) if request.parameter == 'guess' && game
+        end
       end
 
       requests += 1
-      client.puts diagnostics(request_lines)
+      client.puts request.all
       client.close
     end
   end
@@ -43,26 +58,6 @@ class Server
       request_lines << line.chomp 
     end
     request_lines
-  end
-  
-  def path(request_lines)
-    path_and_parameters = request_lines[0].split(' ')[1]
-    path_and_parameters.split('?')[0]
-  end
-
-  def parameters(request_lines)
-    path_and_parameters = request_lines[0].split(' ')[1]
-    params = path_and_parameters.split('?')[1]
-    params = params.delete "\",/" if params
-    params = params.split("=") if params
-  end
-
-  def parameter(request_lines)
-    parameters(request_lines)[0] if parameters(request_lines)
-  end
-
-  def value(request_lines)
-    parameters(request_lines)[1] if parameters(request_lines)
   end
 
   def hello_world(requests)
@@ -77,13 +72,9 @@ class Server
     "Total Requests: #{requests + 1}"
   end
 
-  def diagnostics(request_lines)
-    Diagnostics.new(request_lines).populate
-  end
-
-  def word_search(request_lines)
-    value = value(request_lines)
-    parameter = parameter(request_lines)
+  def word_search(request)
+    value = request.value
+    parameter = request.parameter
     WordSearch.new(value).output if parameter == 'word'
   end
 

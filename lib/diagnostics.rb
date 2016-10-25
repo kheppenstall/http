@@ -6,7 +6,7 @@ class Diagnostics
     @request_lines = request_lines
   end
 
-  def populate
+  def all
     diagnostics = []
     diagnostics << "<pre>"
     diagnostics << "Verb: #{verb}"
@@ -15,7 +15,7 @@ class Diagnostics
     diagnostics << "Host: #{host}"
     diagnostics << "Port: #{port}"
     diagnostics << "Accept: #{accept}"
-    diagnostics << "Origin: #{host}"
+    diagnostics << "Origin: #{origin}"
     diagnostics << "</pre>"
   end
 
@@ -41,7 +41,32 @@ class Diagnostics
   end
   
   def accept
-    request_lines[6].split(':')[1].strip
+    accept_line = request_lines.find {|line| line.include?("Accept: ")}
+    accept_line.split(': ')[1]
+  end
+
+  def origin
+    origin_line = request_lines.find {|line| line.include?("Origin: ")}
+    if origin_line
+      origin_line.split(': ')[1]
+    else
+      host
+    end
+  end
+
+  def parameters
+    path_and_parameters = request_lines[0].split(' ')[1]
+    params = path_and_parameters.split('?')[1]
+    params = params.delete "\",/" if params
+    params = params.split("=") if params
+  end
+
+  def parameter
+    parameters[0] if parameters
+  end
+
+  def value
+    parameters[1] if parameters
   end
 
 end
