@@ -32,10 +32,11 @@ class Server
             client.puts request.all
             break
           when "/wordsearch"
-            client.puts word_search(request)
+            client.puts WordSearch.new(request.value).output if request.parameter == 'word'
           when "/game"
             client.puts game.status if game
         end
+      
       elsif request.verb == 'POST'
         case request.path
           when "/start_game"
@@ -71,13 +72,6 @@ class Server
   def shutdown(requests)
     "Total Requests: #{requests + 1}"
   end
-
-  def word_search(request)
-    value = request.value
-    parameter = request.parameter
-    WordSearch.new(value).output if parameter == 'word'
-  end
-
 end
 
 Server.new
