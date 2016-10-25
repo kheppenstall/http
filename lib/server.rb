@@ -2,6 +2,9 @@ require 'socket'
 require './lib/diagnostics'
 require './lib/word_search'
 require './lib/game'
+require './lib/date_time'
+require './lib/shutdown'
+require './lib/hello_world'
 
 
 class Server
@@ -24,11 +27,11 @@ class Server
       if request.verb == 'GET'
         case request.path
           when "/hello"
-            client.puts hello_world(requests)
+            client.puts HelloWorld.new(requests).output
           when "/datetime"
-            client.puts datetime
+            client.puts DateTime.new.output
           when "/shutdown"
-            client.puts shutdown(requests)
+            client.puts Shutdown.new(requests).output
             client.puts request.all
             break
           when "/wordsearch"
@@ -61,18 +64,8 @@ class Server
     request_lines
   end
 
-  def hello_world(requests)
-    "Hello, world (#{requests})"
-  end
-
-  def datetime
-    Time.now.strftime('%I:%M on %A, %B %d, %Y') 
-  end
-
-  def shutdown(requests)
-    "Total Requests: #{requests + 1}"
-  end
-
 end
 
-Server.new
+if __FILE__==$0
+  Server.new
+end

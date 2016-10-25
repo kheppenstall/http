@@ -7,7 +7,7 @@ class Diagnostics
   end
 
   def all
-    diagnostics = []
+    diagnostics = ["\n"]
     diagnostics << "<pre>"
     diagnostics << "Verb: #{verb}"
     diagnostics << "Path: #{path}"
@@ -66,7 +66,7 @@ class Diagnostics
   end
 
   def value
-    parameters[1] if parameters
+    parameters[1].split("&")[0] if parameters
   end
 
 end

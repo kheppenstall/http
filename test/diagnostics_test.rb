@@ -125,5 +125,5 @@ class DiagnosticsTest < Minitest::Test
     request = Diagnostics.new(post_request_lines)
     assert_equal "world", request.value
   end
-
+  
 end
