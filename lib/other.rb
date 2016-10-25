@@ -8,7 +8,7 @@ while line = client.gets and !line.chomp.empty?
 end
 
 
-client.puts request_lines
+client.puts request_lines.inspect
 verb = request_lines[0].split(' ')[0]
 path = request_lines[0].split(' ')[1]
 protocol = request_lines[0].split(' ')[2]
