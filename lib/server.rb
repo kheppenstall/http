@@ -6,7 +6,6 @@ require './lib/date_time'
 require './lib/shutdown'
 require './lib/hello_world'
 
-
 class Server
 
   attr_reader :server,
@@ -33,7 +32,6 @@ class Server
             response = [DateTime.new.output, request.all]
           when "/shutdown"
             response = [Shutdown.new(requests).output, request.all]
-            looping = false
           when "/wordsearch"
             response = [WordSearch.new(request.value).output, request.all] if request.parameter == 'word'
           when "/game"
@@ -41,7 +39,6 @@ class Server
           else
             response = [request.all]
         end
-      
       elsif request.verb == 'POST'
         case request.path
           when "/start_game"
@@ -57,9 +54,9 @@ class Server
       requests += 1
       respond(response, client)
       client.close
+      looping = false if request.path == "/shutdown"
     end
   end
-
 
   def respond(response, client)
     response = "<pre>" + response.join("\n") + "</pre>"
@@ -80,9 +77,4 @@ class Server
     end
     request_lines
   end
-
-end
-
-if __FILE__==$0
-  Server.new
 end
