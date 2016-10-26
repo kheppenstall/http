@@ -13,6 +13,7 @@ class Server
 
   def initialize
     @server = TCPServer.new 9292
+    @game = Game.new
     form_response
   end
 
@@ -33,19 +34,19 @@ class Server
           when "/shutdown"
             response = [Shutdown.output(requests), request.all]
           when "/wordsearch"
-            response = [WordSearch.new(request.value).output, request.all] if request.parameter == 'word'
+            response = [WordSearch.output(request.value), request.all] if request.parameter == 'word'
           when "/game"
-            response = [game.status, request.all] if game
+            response = [game.status, request.all]
           else
             response = [request.all]
         end
       elsif request.verb == 'POST'
         case request.path
           when "/start_game"
+            game.start
             response = ["Good luck!", request.all]
-            @game = Game.new
           when "/game"
-            game.guess(request.value) if request.parameter == 'guess' && game
+            game.guess(request.value) if request.parameter == 'guess'
             response = [request.all]
           else
             response = [request.all]
@@ -57,6 +58,8 @@ class Server
       looping = false if request.path == "/shutdown"
     end
   end
+
+  
 
   def respond(response, client, request)
     response = "<pre>" + response.join("\n") + "</pre>"

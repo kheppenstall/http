@@ -73,12 +73,14 @@ class ServerTest < Minitest::Test
   end
 
   def test_it_tells_you_when_you_guess_too_high
+    Faraday.post url + 'start_game'
     Faraday.post url + 'game?guess=101'
     response = Faraday.get url + 'game'
     assert response.body.include?("too high.")
   end
 
   def test_it_tells_you_when_you_guess_too_low
+    Faraday.post url + 'start_game'
     Faraday.post url + 'game?guess=-1'
     response = Faraday.get url + 'game'
     assert response.body.include?("too low.")
@@ -86,8 +88,7 @@ class ServerTest < Minitest::Test
 
   def test_the_game_redirects_after_a_guess
     response = Faraday.post url + 'game?guess=101'
-    puts response.body
-    # assert response.body.include?("302")
+    assert response.headers.include?("location")
   end
 
 end
