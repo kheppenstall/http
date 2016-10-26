@@ -21,8 +21,8 @@ class ServerTest < Minitest::Test
   end
 
   def test_it_gives_200_as_status
-    server = Faraday.get url
-    assert_equal 200, server.status
+    response = Faraday.get url
+    assert_equal 200, response.status
   end
 
   def test_it_outputs_hello_world0_at_path_hello_world
@@ -67,6 +67,7 @@ class ServerTest < Minitest::Test
   end
 
   def test_it_counts_your_guesses
+    Faraday.post url + 'start_game'
     Faraday.post url + 'game?guess=50'
     response = Faraday.get url + 'game'
     assert response.body.include?("You have made ")
@@ -87,8 +88,15 @@ class ServerTest < Minitest::Test
   end
 
   def test_the_game_redirects_after_a_guess
+    Faraday.post url + 'start_game'
     response = Faraday.post url + 'game?guess=101'
     assert response.headers.include?("location")
+  end
+
+  def test_posting_guess_redirects_game
+    Faraday.post url + 'start_game'
+    response = Faraday.post url + 'game?guess=101'
+    assert_equal 302, response.status
   end
 
 end
