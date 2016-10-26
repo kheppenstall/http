@@ -31,5 +31,4 @@ class WordSearchTest < Minitest::Test
     assert_equal expected, result
   end
     
-
 end

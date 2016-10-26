@@ -22,12 +22,12 @@ class Server
     requests = 0
     looping = true
     while looping do
-      client = server.accept 
+      client = server.accept
+      requests += 1
       request_lines = parse_request(client)
       request = Diagnostics.new(request_lines)
       response = form_response(request, requests)
       respond(response, client, request)
-      requests += 1
       client.close
       looping = false if request.path == "/shutdown"
     end

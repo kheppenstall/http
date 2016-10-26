@@ -37,8 +37,9 @@ class ServerTest < Minitest::Test
   end
 
   def test_datetime_path_gives_date_and_time
+    time = Time.now.strftime('%I:%M on %A, %B %d, %Y') 
     response = Faraday.get url + 'datetime'
-    assert response.body.include?('2016')
+    assert response.body.include?(time)
   end
 
   def test_outputs_a_known_word_is_known

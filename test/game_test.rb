@@ -22,7 +22,6 @@ class GameTest < Minitest::Test
   def test_answer_is_between_0_and_100
     game = Game.new
     game.start
-    answer = game.answer
     assert game.answer >= 0 && game.answer <= 100
   end
 

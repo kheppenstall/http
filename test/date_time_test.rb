@@ -9,6 +9,8 @@ class DateTimeTest < Minitest::Test
   end
 
   def test_it_includes_year
-    assert DateTime.output.include?("2016")
+    time = Time.now.strftime('%I:%M on %A, %B %d, %Y') 
+    assert DateTime.output.include?(time)
   end
 end
+

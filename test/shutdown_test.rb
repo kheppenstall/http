@@ -9,7 +9,7 @@ class ShutdownTest < Minitest::Test
   end
 
   def test_it_outputs_total_requests
-    result = Shutdown.output(0)
+    result = Shutdown.output(1)
     expected = "Total Requests: 1"
     assert_equal expected, result
   end

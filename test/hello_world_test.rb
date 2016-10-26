@@ -4,8 +4,12 @@ require "minitest/pride"
 
 class HelloWorldTest < Minitest::Test
 
-  def test_it_outputs_total_requests_minus_1
-    result = HelloWorld.output(0)
+  def test_it_exists
+    assert HelloWorld.output(0)
+  end
+  
+  def test_it_outputs_total_requests
+    result = HelloWorld.output(1)
     expected = "Hello, World! (0)"
     assert_equal expected, result
   end
