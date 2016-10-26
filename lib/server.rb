@@ -52,22 +52,35 @@ class Server
         end
       end
       requests += 1
-      respond(response, client)
+      respond(response, client, request)
       client.close
       looping = false if request.path == "/shutdown"
     end
   end
 
-  def respond(response, client)
+  def respond(response, client, request)
     response = "<pre>" + response.join("\n") + "</pre>"
     output = "<html><head></head><body>#{response}</body></html>"
-    headers = ["http/1.1 200 ok",
-          "date: #{Time.now.strftime('%a, %e %b %Y %H:%M:%S %z')}",
-          "server: ruby",
-          "content-type: text/html; charset=iso-8859-1",
-          "content-length: #{output.length}\r\n\r\n"].join("\r\n")
+    headers = make_header(output, request)
     client.puts headers
     client.puts output
+  end
+
+  def make_header(output, request)
+    if request.verb == 'POST' && request.path == '/game'
+      ["http/1.1 302 moved temporarily",
+      "Location: http://127.0.0.1:9292/game/",
+      "date: #{Time.now.strftime('%a, %e %b %Y %H:%M:%S %z')}",
+      "server: ruby",
+      "content-type: text/html; charset=iso-8859-1",
+      "content-length: #{output.length}\r\n\r\n"].join("\r\n")
+    else
+      ["http/1.1 200 ok",
+      "date: #{Time.now.strftime('%a, %e %b %Y %H:%M:%S %z')}",
+      "server: ruby",
+      "content-type: text/html; charset=iso-8859-1",
+      "content-length: #{output.length}\r\n\r\n"].join("\r\n")
+    end
   end
 
   def parse_request(client)
