@@ -7,7 +7,7 @@ class HelloWorld
   end
 
   def output
-    "Hello, world (#{requests})"
+    "Hello, World! (#{requests})"
   end
 
 end
