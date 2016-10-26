@@ -1,12 +1,6 @@
-class Shutdown
-
-  attr_reader :requests
-
-  def initialize(requests)
-    @requests = requests
-  end
+module Shutdown
   
-  def output
+  def self.output(requests)
     "Total Requests: #{requests + 1}"
   end
 

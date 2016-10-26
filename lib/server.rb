@@ -27,11 +27,11 @@ class Server
       if request.verb == 'GET'
         case request.path
           when "/hello"
-            response = [HelloWorld.new(requests).output, request.all]
+            response = [HelloWorld.output(requests), request.all]
           when "/datetime"
-            response = [DateTime.new.output, request.all]
+            response = [DateTime.output, request.all]
           when "/shutdown"
-            response = [Shutdown.new(requests).output, request.all]
+            response = [Shutdown.output(requests), request.all]
           when "/wordsearch"
             response = [WordSearch.new(request.value).output, request.all] if request.parameter == 'word'
           when "/game"
@@ -69,7 +69,7 @@ class Server
   def make_header(output, request)
     if request.verb == 'POST' && request.path == '/game'
       ["http/1.1 302 moved temporarily",
-      "Location: http://127.0.0.1:9292/game/",
+      "Location: http://127.0.0.1:9292/game",
       "date: #{Time.now.strftime('%a, %e %b %Y %H:%M:%S %z')}",
       "server: ruby",
       "content-type: text/html; charset=iso-8859-1",

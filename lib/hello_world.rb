@@ -1,12 +1,6 @@
-class HelloWorld
+module HelloWorld
 
-  attr_reader :requests
-
-  def initialize(requests)
-    @requests = requests
-  end
-
-  def output
+  def self.output(requests)
     "Hello, World! (#{requests})"
   end
 

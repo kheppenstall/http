@@ -85,8 +85,9 @@ class ServerTest < Minitest::Test
   end
 
   def test_the_game_redirects_after_a_guess
-    response = Faraday.get url + 'game?guess=50'
-    assert response.body.include?("GET")
+    response = Faraday.post url + 'game?guess=101'
+    puts response.body
+    # assert response.body.include?("302")
   end
 
 end
