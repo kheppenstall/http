@@ -1,5 +1,16 @@
 require 'socket'
 require 'faraday'
+require 'net/http'
+require 'uri'
+
+# uri = URI.parse("http://127.0.0.1:9292/")
+# response = Net::HTTP.get_response(uri)
+# puts response.inspect
+
+
+  # [@game.guess(guess_num), "HTTP 1.1 302 FOUND\nLocation: http://127.0.0.1:9292/game"]
+server = Faraday.get url
+    assert_equal 200, server.status
 
 # url = "http://google.com"
 # url = "http://127.0.0.1:9292/"
@@ -8,12 +19,12 @@ require 'faraday'
 # response = conn.get url
 # p response.body
 
-  url = "http://127.0.0.1:9292/"
-  # url = 'http://google.com'
-    conn = Faraday.new
-    response = conn.get(url)
-    puts response.body
-    puts response.body.include?("Verb: GET").inspect
+  # url = "http://127.0.0.1:9292/"
+  # # url = 'http://google.com'
+  #   conn = Faraday.new
+  #   response = conn.get(url)
+  #   puts response.body
+  #   puts response.body.include?("Verb: GET").inspect
 
 # conn = Faraday.new(:url => "google.com") do |faraday|
 #   faraday.request  :url_encoded             # form-encode POST params

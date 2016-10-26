@@ -17,6 +17,7 @@ class Diagnostics
     diagnostics << "Accept: #{accept}"
     diagnostics << "Origin: #{origin}"
     diagnostics << "</pre>"
+    diagnostics.join("\n")
   end
 
   def verb
@@ -66,7 +67,7 @@ class Diagnostics
   end
 
   def value
-    parameters[1].split("&")[0] if parameters
+    parameters[1].split("?")[0] if parameters
   end
 
 end

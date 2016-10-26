@@ -1,7 +1,6 @@
 require "minitest/autorun"
 require "minitest/pride"
 require 'faraday'
-require './lib/server'
 
 class ServerTest < Minitest::Test
 
@@ -22,8 +21,8 @@ class ServerTest < Minitest::Test
   end
 
   def test_it_gives_200_as_status
-    server = Faraday.new url
-    response = server.get
+    server = Faraday.get url
+    assert_equal 200, server.status
   end
 
 

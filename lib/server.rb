@@ -14,46 +14,63 @@ class Server
 
   def initialize
     @server = TCPServer.new 9292
-    respond
+    form_response
   end
 
-  def respond
+  def form_response
     requests = 0
-    loop do
+    looping = true
+    while looping do
       client = server.accept 
       request_lines = parse_request(client)
       request = Diagnostics.new(request_lines)
-      
+      response = []
       if request.verb == 'GET'
         case request.path
           when "/hello"
-            client.puts HelloWorld.new(requests).output
+            response = [HelloWorld.new(requests).output, request.all]
           when "/datetime"
-            client.puts DateTime.new.output
+            response = [DateTime.new.output, request.all]
           when "/shutdown"
-            client.puts Shutdown.new(requests).output
-            client.puts request.all
-            break
+            response = [Shutdown.new(requests).output, request.all]
+            looping = false
           when "/wordsearch"
-            client.puts WordSearch.new(request.value).output if request.parameter == 'word'
+            response = [WordSearch.new(request.value).output, request.all] if request.parameter == 'word'
           when "/game"
-            client.puts game.status if game
+            response = [game.status, request.all] if game
+          else
+            response = [request.all]
         end
       
       elsif request.verb == 'POST'
         case request.path
           when "/start_game"
-            client.puts "Good luck!"
+            response = ["Good luck!", request.all]
             @game = Game.new
           when "/game"
             game.guess(request.value) if request.parameter == 'guess' && game
+            response = [request.all]
+          else
+            response = [request.all]
         end
       end
-
       requests += 1
-      client.puts request.all
+      respond(response, client)
       client.close
     end
+  end
+
+
+  def respond(response, client)
+    response = "<pre>" + response.join("\n") + "</pre>"
+    output = "<html><head></head><body>#{response}</body></html>"
+    headers = ["http/1.1 200 ok",
+          "date: #{Time.now.strftime('%a, %e %b %Y %H:%M:%S %z')}",
+          "server: ruby",
+          "content-type: text/html; charset=iso-8859-1",
+          "content-length: #{output.length}\r\n\r\n"].join("\r\n")
+    client.puts headers
+    client.puts output
   end
 
   def parse_request(client)
