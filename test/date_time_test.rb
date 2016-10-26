@@ -12,5 +12,6 @@ class DateTimeTest < Minitest::Test
     time = Time.now.strftime('%I:%M on %A, %B %d, %Y') 
     assert DateTime.output.include?(time)
   end
+  
 end
 
