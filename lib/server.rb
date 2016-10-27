@@ -10,27 +10,31 @@ require './lib/http_headers'
 class Server
 
   attr_reader :server,
-              :game
+              :game,
+              :looping
 
   def initialize
     @server = TCPServer.new 9292
     @game = Game.new
+    @looping = true
     enter_loop
   end
 
   def enter_loop
     requests = 0
-    looping = true
     while looping do
       client = server.accept
       requests += 1
-      request_lines = parse_request(client)
-      request = Diagnostics.new(request_lines)
-      response = form_response(request, requests)
-      respond(response, client, request)
+      read_and_respond(client, requests)
       client.close
-      looping = false if request.path == "/shutdown"
     end
+  end
+
+  def read_and_respond(client, requests)
+    request_lines = parse_request(client)
+    request = Diagnostics.new(request_lines)
+    response = form_response(request, requests)
+    respond(response, client, request)
   end
 
   def parse_request(client)
@@ -58,6 +62,7 @@ class Server
       when "/datetime"
         [DateTime.output, request.all]
       when "/shutdown"
+        @looping = false
         [Shutdown.output(requests), request.all]
       when "/wordsearch"
         [WordSearch.output(request.value), request.all] if request.parameter == 'word'
